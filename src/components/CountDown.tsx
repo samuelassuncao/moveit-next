@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import styles from "../styles/components/CountDown.module.css"
 
 import { FaCheckCircle as CheckIcon } from "react-icons/fa"
+import { ChallengesContext } from "../contexts/ChallengesContext"
 let countDownTimeOut: NodeJS.Timeout
 const INITIAL_TIME = 0.1 * 60
 
 export function CountDown () {
+    const { startNewChallenge } = useContext(ChallengesContext)
+
     const [time, setTime] = useState(INITIAL_TIME)
     const [isActive, setIsActive] = useState(false)
     const [hasFinished, setHasFinished] = useState(false)
@@ -36,6 +39,7 @@ export function CountDown () {
         } else if (isActive && time === 0) {
             setHasFinished(true)
             setIsActive(false)
+            startNewChallenge()
         }
     }, [isActive, time])
 
