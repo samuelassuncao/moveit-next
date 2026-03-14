@@ -1,9 +1,14 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import styles from "../styles/components/CountDown.module.css"
 
+import { FaCheckCircle as CheckIcon } from "react-icons/fa"
+let countDownTimeOut: NodeJS.Timeout
+const INITIAL_TIME = 0.1 * 60
+
 export function CountDown () {
-    const [time, setTime] = useState(25*60)
-    const [active, setActive] = useState(false)
+    const [time, setTime] = useState(INITIAL_TIME)
+    const [isActive, setIsActive] = useState(false)
+    const [hasFinished, setHasFinished] = useState(false)
 
     const minutes = Math.floor(time / 60)
     const seconds = time % 60
@@ -11,20 +16,29 @@ export function CountDown () {
     const [minuteLeft, minuteRight] = String(minutes).padStart(2, '0').split('')
     const [secondLeft, secondRight] = String(seconds).padStart(2, '0').split('')
 
-    const shouldReduceSecond = active && time > 0
-    function handleReduceSecond () {
-        setTimeout(() => {
-                setTime(time - 1)
-            }, 1000)
+    function startCountDown () {
+        setIsActive(true)
     }
 
-    function startCountDown () {
-        setActive(true)
+    function resetCountDown () {
+        clearTimeout(countDownTimeOut)
+        setIsActive(false)
+        setTime(INITIAL_TIME)
     }
 
     useEffect(() => {
-        if (shouldReduceSecond) {handleReduceSecond()}
-    }, [active, time])
+        if (isActive && time > 0) {
+            countDownTimeOut = setTimeout(() => {
+            setTime(prev => prev - 1)
+            }, 1000)
+
+            return () => clearTimeout(countDownTimeOut)
+        } else if (isActive && time === 0) {
+            setHasFinished(true)
+            setIsActive(false)
+        }
+    }, [isActive, time])
+
 
     return (
         <div>
@@ -40,12 +54,34 @@ export function CountDown () {
                 </div>
             </div>
 
-            <button
-                type="button"
-                className={styles.countDownButton}
-                onClick={startCountDown}>
-                Iniciar um ciclo
-            </button>
+            { hasFinished ? (
+                <button
+                    disabled
+                    className={styles.countDownButton}
+                >
+                    Ciclo finalizado
+                    <CheckIcon style={{ marginLeft: "1rem", color: "#4cd62b" }}/>
+                </button>
+            ) : (
+                <>
+                    { isActive ? (
+                        <button
+                            type="button"
+                            className={`${styles.countDownButton} ${styles.countDownButtonActive}`}
+                            onClick={resetCountDown}>
+                            Abandonar ciclo
+                        </button>
+                    )
+                    : (
+                        <button
+                            type="button"
+                            className={styles.countDownButton}
+                            onClick={startCountDown}>
+                            Iniciar um ciclo
+                        </button>
+                    )}
+                </>
+            )}
         </div>
     )
 }
