@@ -16,7 +16,7 @@ type CountDownProviderProps = {
 
 export  const CountDownContext = createContext({} as CountDownContextData)
 
-const INITIAL_TIME = 25 * 60 // Opted to declare as global to make it easier to configure initial time. In the future, user can choose what this value should be.
+const INITIAL_TIME = 0.1 * 60 // Opted to declare as global to make it easier to configure initial time. In the future, user can choose what this value should be.
 let countDownTimeOut: NodeJS.Timeout
 
 
