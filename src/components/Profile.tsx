@@ -2,8 +2,13 @@ import { useContext } from "react"
 import { ChallengesContext } from "../contexts/ChallengesContext"
 import styles from "../styles/components/Profile.module.css"
 
-export function Profile () {
+/**
+ * # Future implementation: User can choose their profile pic and name
+ *   If user doesn't want a pic, implement cartoon avatar that user can choose
+ * # Future implementation: login system
+ */
 
+export function Profile () {
     const { level } = useContext(ChallengesContext)
     return (
         <div className={styles.profileContainer}>
